@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEMAYBEOHUB - SYSTEM SECURE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #060814;
+            --bg-card: rgba(10, 15, 30, 0.85);
+            --border-glow: #8b5cf6;
+            --neon-cyan: #00f2fe;
+            --neon-red: #ff3366;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.12) 0px, transparent 50%);
+            color: #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden;
+        }
+
+        /* Hiệu ứng quét lướt qua màn hình */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .container { 
+            background: var(--bg-card); 
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(139, 92, 246, 0.25); 
+            text-align: center; 
+            width: 420px; 
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            z-index: 5;
+        }
+
+        /* Thanh trang trí công nghệ phía trên đỉnh hộp */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 40%; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--border-glow), var(--neon-cyan), transparent);
+            box-shadow: 0 0 10px var(--border-glow);
+        }
+
+        h1 { 
+            font-size: 18px; 
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff; 
+            margin-bottom: 8px; 
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 16px; 
+            background: #02040a; 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 10px; 
+            color: var(--neon-red); 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 13px; 
+            text-align: center; 
+            outline: none; 
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        input.success {
+            color: var(--neon-cyan) !important;
+            border-color: rgba(0, 242, 254, 0.3);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.1), inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: #ffffff;
+            border: none; 
+            border-radius: 10px; 
+            color: #000000; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 13px; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        button:hover { 
+            background: var(--border-glow);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Thiết kế hệ thống Toast thay thế cho Alert xấu xí */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .toast {
+            background: #0a0f1e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>MEMAYBEOHUB GATEWAY</h1>
+    <div class="subtitle">// PHÂN LỚP GIẢI MÃ BẢO MẬT</div>
+    
+    <div class="input-wrapper">
+        <input type="text" id="keyInput" readonly value="ĐANG THẨM ĐỊNH CHỨNG CHỈ MÁY CHỦ...">
+    </div>
+    
+    <button onclick="copyToClipboard()">SAO CHÉP MÃ KEY</button>
+</div>
+
+<div class="toast-container">
+    <div id="toast" class="toast"></div>
+</div>
+
+<script>
+    let currentDatabaseUrl = ""; 
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.style.borderColor = isError ? "rgba(255, 51, 102, 0.4)" : "rgba(0, 242, 254, 0.4)";
+        toast.style.color = isError ? "var(--neon-red)" : "var(--neon-cyan)";
+        
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3500);
+    }
+
+    async function resolveKey() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const anonymousID = urlParams.get('id') || urlParams.get('ID');
+        const keyInput = document.getElementById('keyInput');
+        
+        if (!anonymousID) { 
+            keyInput.value = "LỖI: KHÔNG TÌM THẤY ID ĐỊNH DANH"; 
+            return; 
+        }
+        
+        try {
+            currentDatabaseUrl = `https://keyvip-eeae4-default-rtdb.firebaseio.com/${anonymousID}.json`;
+            const response = await fetch(currentDatabaseUrl);
+            const data = await response.json();
+            
+            if (data && data.mapsTo) {
+                keyInput.value = data.mapsTo;
+                keyInput.classList.add('success');
+            } else {
+                keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
+            }
+        } catch (error) { 
+            keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI"; 
+        }
+    }
+
+    async function copyToClipboard() {
+        const keyInput = document.getElementById('keyInput');
+        
+        if (keyInput.value && !keyInput.value.startsWith("LỖI") && keyInput.value !== "ĐANG THẨM ĐỊNH CHỨNG CHỈ MÁY CHỦ...") {
+            try {
+                await navigator.clipboard.writeText(keyInput.value);
+                showToast("THÀNH CÔNG: ĐÃ SAO CHÉP. HÃY QUAY LẠI GAME ĐỂ KÍCH HOẠT.");
+                
+                if (currentDatabaseUrl !== "") {
+                    fetch(currentDatabaseUrl, { method: 'DELETE' });
+                }
+            } catch (err) {
+                keyInput.select();
+                document.execCommand('copy');
+                showToast("THÀNH CÔNG: MÃ KEY ĐÃ ĐƯỢC LƯU VÀO KHAY NHỚ.");
+                if (currentDatabaseUrl !== "") {
+                    fetch(currentDatabaseUrl, { method: 'DELETE' });
+                }
+            }
+        } else {
+            showToast("TỪ CHỐI: MÃ KEY KHÔNG HỢP LỆ", true);
+        }
+    }
+
+    window.onload = resolveKey;
+</script>
+</body>
+</html>
+
