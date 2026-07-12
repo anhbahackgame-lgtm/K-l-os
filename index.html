@@ -33,7 +33,6 @@
             overflow: hidden;
         }
 
-        /* Hiệu ứng quét lướt qua màn hình */
         body::before {
             content: " ";
             display: block;
@@ -58,7 +57,6 @@
             z-index: 5;
         }
 
-        /* Thanh trang trí công nghệ phía trên đỉnh hộp */
         .container::after {
             content: '';
             position: absolute;
@@ -135,11 +133,6 @@
             transform: translateY(-1px);
         }
 
-        button:active {
-            transform: translateY(1px);
-        }
-
-        /* Thiết kế hệ thống Toast thay thế cho Alert xấu xí */
         .toast-container {
             position: fixed;
             bottom: 30px;
@@ -171,14 +164,14 @@
 <body>
 
 <div class="container">
-    <h1>MEMAYBEOHUB GATEWAY</h1>
-    <div class="subtitle">// PHÂN LỚP GIẢI MÃ BẢO MẬT</div>
+    <h1 id="mainTitle">MEMAYBEOHUB GATEWAY</h1>
+    <div class="subtitle" id="subTitle">// PHÂN LỚP GIẢI MÃ BẢO MẬT</div>
     
     <div class="input-wrapper">
         <input type="text" id="keyInput" readonly value="ĐANG THẨM ĐỊNH CHỨNG CHỈ MÁY CHỦ...">
     </div>
     
-    <button onclick="copyToClipboard()">SAO CHÉP MÃ KEY</button>
+    <button id="mainBtn" onclick="copyToClipboard()">SAO CHÉP MÃ KEY</button>
 </div>
 
 <div class="toast-container">
@@ -187,6 +180,7 @@
 
 <script>
     let currentDatabaseUrl = ""; 
+    const BASE_FIREBASE = "https://keyvip-eeae4-default-rtdb.firebaseio.com/";
 
     function showToast(message, isError = false) {
         const toast = document.getElementById('toast');
@@ -202,34 +196,80 @@
 
     async function resolveKey() {
         const urlParams = new URLSearchParams(window.location.search);
+        
+        // Nhận 2 dạng ID: "next" (Lần 1 -> Chuyển sang Link 2) hoặc "id" (Lần 2 -> Nhận Key)
+        const idNext = urlParams.get('next') || urlParams.get('NEXT');
         const anonymousID = urlParams.get('id') || urlParams.get('ID');
+        
         const keyInput = document.getElementById('keyInput');
-        
-        if (!anonymousID) { 
-            keyInput.value = "LỖI: KHÔNG TÌM THẤY ID ĐỊNH DANH"; 
-            return; 
-        }
-        
-        try {
-            currentDatabaseUrl = `https://keyvip-eeae4-default-rtdb.firebaseio.com/${anonymousID}.json`;
-            const response = await fetch(currentDatabaseUrl);
-            const data = await response.json();
-            
-            if (data && data.mapsTo) {
-                keyInput.value = data.mapsTo;
-                keyInput.classList.add('success');
-            } else {
-                keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
+        const mainTitle = document.getElementById('mainTitle');
+        const subTitle = document.getElementById('subTitle');
+        const mainBtn = document.getElementById('mainBtn');
+
+        // ==========================================================
+        // LỚP 1: VƯỢT XONG LINK 1 -> TỰ ĐỘNG CHUYỂN HƯỚNG SANG LINK 2
+        // ==========================================================
+        if (idNext) {
+            mainTitle.innerText = "GATEWAY TẦNG 1 THÀNH CÔNG";
+            subTitle.innerText = "// ĐANG ĐỌC CỔNG BẮC CẦU TẦNG 2...";
+            keyInput.value = "ĐANG TẢI LINK XÁC THỰC 2...";
+            mainBtn.innerText = "ĐANG CHUYỂN HƯỚNG...";
+            mainBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${BASE_FIREBASE}${idNext}.json`);
+                const data = await response.json();
+                
+                if (data && data.redirectTo) {
+                    showToast("THÀNH CÔNG TẦNG 1! CHUYỂN HƯỚNG SANG LINK 2...");
+                    
+                    // Xóa ID trung gian trên Firebase
+                    fetch(`${BASE_FIREBASE}${idNext}.json`, { method: 'DELETE' });
+
+                    // Chuyển hướng người chơi sang Link4M Lần 2 ngay lập tức
+                    setTimeout(() => {
+                        window.location.href = data.redirectTo;
+                    }, 1000);
+                } else {
+                    keyInput.value = "LỖI: LINK TẦNG 1 ĐÃ HẾT HẠN";
+                    showToast("TỪ CHỐI: PHÂN LUỒNG TẦNG 1 LỖI", true);
+                }
+            } catch (error) {
+                keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI";
             }
-        } catch (error) { 
-            keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI"; 
+            return;
         }
+
+        // ==========================================================
+        // LỚP 2: VƯỢT XONG LINK 2 -> HIỂN THỊ MÃ KEY CHÍNH THỨC
+        // ==========================================================
+        if (anonymousID) {
+            try {
+                currentDatabaseUrl = `${BASE_FIREBASE}${anonymousID}.json`;
+                const response = await fetch(currentDatabaseUrl);
+                const data = await response.json();
+                
+                if (data && data.mapsTo) {
+                    keyInput.value = data.mapsTo;
+                    keyInput.classList.add('success');
+                    showToast("XÁC THỰC CỔNG THÀNH CÔNG!");
+                } else {
+                    keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
+                }
+            } catch (error) { 
+                keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI"; 
+            }
+            return;
+        }
+
+        // Không có tham số nào trên URL
+        keyInput.value = "LỖI: KHÔNG TÌM THẤY ID ĐỊNH DANH";
     }
 
     async function copyToClipboard() {
         const keyInput = document.getElementById('keyInput');
         
-        if (keyInput.value && !keyInput.value.startsWith("LỖI") && keyInput.value !== "ĐANG THẨM ĐỊNH CHỨNG CHỈ MÁY CHỦ...") {
+        if (keyInput.value && !keyInput.value.startsWith("LỖI") && !keyInput.value.startsWith("ĐANG")) {
             try {
                 await navigator.clipboard.writeText(keyInput.value);
                 showToast("THÀNH CÔNG: ĐÃ SAO CHÉP. HÃY QUAY LẠI GAME ĐỂ KÍCH HOẠT.");
@@ -254,4 +294,3 @@
 </script>
 </body>
 </html>
-
