@@ -126,11 +126,17 @@
             transition: all 0.2s ease;
         }
 
-        button:hover { 
+        button:hover:not(:disabled) { 
             background: var(--border-glow);
             color: #ffffff;
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
             transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #1e293b;
+            color: #64748b;
+            cursor: not-allowed;
         }
 
         .toast-container {
@@ -197,7 +203,6 @@
     async function resolveKey() {
         const urlParams = new URLSearchParams(window.location.search);
         
-        // Nhận 2 dạng ID: "next" (Lần 1 -> Chuyển sang Link 2) hoặc "id" (Lần 2 -> Nhận Key)
         const idNext = urlParams.get('next') || urlParams.get('NEXT');
         const anonymousID = urlParams.get('id') || urlParams.get('ID');
         
@@ -207,12 +212,12 @@
         const mainBtn = document.getElementById('mainBtn');
 
         // ==========================================================
-        // LỚP 1: VƯỢT XONG LINK 1 -> TỰ ĐỘNG CHUYỂN HƯỚNG SANG LINK 2
+        // TẦNG 1: CHUYỂN TIẾP TRÌNH DUYỆT SANG ĐƯỜNG LINK RÚT GỌN THỨ 2
         // ==========================================================
         if (idNext) {
             mainTitle.innerText = "GATEWAY TẦNG 1 THÀNH CÔNG";
-            subTitle.innerText = "// ĐANG ĐỌC CỔNG BẮC CẦU TẦNG 2...";
-            keyInput.value = "ĐANG TẢI LINK XÁC THỰC 2...";
+            subTitle.innerText = "// ĐANG KẾT NỐI KHỐI DỮ LIỆU TẦNG ĐÍCH...";
+            keyInput.value = "ĐANG TẢI LIÊN KẾT RÚT GỌN LỚP 2...";
             mainBtn.innerText = "ĐANG CHUYỂN HƯỚNG...";
             mainBtn.disabled = true;
 
@@ -220,28 +225,33 @@
                 const response = await fetch(`${BASE_FIREBASE}${idNext}.json`);
                 const data = await response.json();
                 
+                // data.redirectTo lúc này là link sạch: https://link4m.org/QtePLN tạo từ game
                 if (data && data.redirectTo) {
-                    showToast("THÀNH CÔNG TẦNG 1! CHUYỂN HƯỚNG SANG LINK 2...");
+                    keyInput.classList.add('success');
+                    showToast("PHÂN LUỒNG HỢP LỆ! CHUYỂN HƯỚNG SAU 2 GIÂY...");
                     
-                    // Xóa ID trung gian trên Firebase
-                    fetch(`${BASE_FIREBASE}${idNext}.json`, { method: 'DELETE' });
-
-                    // Chuyển hướng người chơi sang Link4M Lần 2 ngay lập tức
-                    setTimeout(() => {
-                        window.location.href = data.redirectTo;
+                    let countdown = 2;
+                    const interval = setInterval(() => {
+                        countdown--;
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            // Chuyển hướng thẳng tới link sạch của Link4M, không giữ lại tham số API Token
+                            window.location.href = data.redirectTo;
+                        }
                     }, 1000);
+
                 } else {
-                    keyInput.value = "LỖI: LINK TẦNG 1 ĐÃ HẾT HẠN";
-                    showToast("TỪ CHỐI: PHÂN LUỒNG TẦNG 1 LỖI", true);
+                    keyInput.value = "LỖI: PHÂN LỚP DỮ LIỆU 1 HẾT HẠN HOẶC BỊ XOÁ";
+                    showToast("TỪ CHỐI TRUY CẬP: TOKEN SAI LỆCH", true);
                 }
             } catch (error) {
-                keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI";
+                keyInput.value = "LỖI: TRUY VẤN GATEWAY THẤT BẠI";
             }
             return;
         }
 
         // ==========================================================
-        // LỚP 2: VƯỢT XONG LINK 2 -> HIỂN THỊ MÃ KEY CHÍNH THỨC
+        // TẦNG 2: VƯỢT XONG LINK 2 -> TRẢ VỀ TRANG WEB ĐỂ HIỂN THỊ KEY
         // ==========================================================
         if (anonymousID) {
             try {
@@ -252,9 +262,12 @@
                 if (data && data.mapsTo) {
                     keyInput.value = data.mapsTo;
                     keyInput.classList.add('success');
-                    showToast("XÁC THỰC CỔNG THÀNH CÔNG!");
+                    mainTitle.innerText = "XÁC THỰC HOÀN TẤT";
+                    subTitle.innerText = "// AN TOÀN - ĐÃ THU THẬP ĐỦ CHỨNG CHỈ QUẢNG CÁO";
+                    showToast("XÁC THỰC KHÁCH HÀNG THÀNH CÔNG!");
                 } else {
                     keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
+                    showToast("MÃ XÁC THỰC KHÔNG HỢP LỆ", true);
                 }
             } catch (error) { 
                 keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI"; 
@@ -262,8 +275,9 @@
             return;
         }
 
-        // Không có tham số nào trên URL
-        keyInput.value = "LỖI: KHÔNG TÌM THẤY ID ĐỊNH DANH";
+        // Không tìm thấy bất kỳ tham số định danh hợp quy nào
+        keyInput.value = "LỖI: THIẾU THAM SỐ ID ĐỊNH DANH HỆ THỐNG";
+        mainBtn.disabled = true;
     }
 
     async function copyToClipboard() {
@@ -286,7 +300,7 @@
                 }
             }
         } else {
-            showToast("TỪ CHỐI: MÃ KEY KHÔNG HỢP LỆ", true);
+            showToast("TỪ CHỐI: MÃ KEY KHÔNG HỢP LỆ HOẶC CHƯA HOÀN THÀNH NHIỆM VỤ", true);
         }
     }
 
