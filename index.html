@@ -185,7 +185,6 @@
 </div>
 
 <script>
-    let currentDatabaseUrl = ""; 
     const BASE_FIREBASE = "https://keyvip-eeae4-default-rtdb.firebaseio.com/";
 
     function showToast(message, isError = false) {
@@ -203,8 +202,9 @@
     async function resolveKey() {
         const urlParams = new URLSearchParams(window.location.search);
         
+        // Fix quét thông minh: Tự nhận dạng tất cả kiểu viết tham số hoa/thường từ các trang rút gọn link
         const idNext = urlParams.get('next') || urlParams.get('NEXT');
-        const anonymousID = urlParams.get('id') || urlParams.get('ID');
+        const anonymousID = urlParams.get('id') || urlParams.get('ID') || urlParams.get('key') || urlParams.get('KEY');
         
         const keyInput = document.getElementById('keyInput');
         const mainTitle = document.getElementById('mainTitle');
@@ -212,7 +212,7 @@
         const mainBtn = document.getElementById('mainBtn');
 
         // ==========================================================
-        // TẦNG 1: CHUYỂN TIẾP TRÌNH DUYỆT SANG ĐƯỜNG LINK RÚT GỌN THỨ 2
+        // TẦNG 1: CHUYỂN TIẾP TRÌNH DUYỆT SANG ĐƯỜNG LINK RÚT GỌN LỚP 2
         // ==========================================================
         if (idNext) {
             mainTitle.innerText = "GATEWAY TẦNG 1 THÀNH CÔNG";
@@ -223,29 +223,25 @@
 
             try {
                 const response = await fetch(`${BASE_FIREBASE}${idNext}.json`);
+                if (!response.ok) throw new Error("Firebase blocked / Bad rule");
+                
                 const data = await response.json();
                 
-                // data.redirectTo lúc này là link sạch: https://link4m.org/QtePLN tạo từ game
                 if (data && data.redirectTo) {
                     keyInput.classList.add('success');
                     showToast("PHÂN LUỒNG HỢP LỆ! CHUYỂN HƯỚNG SAU 2 GIÂY...");
                     
-                    let countdown = 2;
-                    const interval = setInterval(() => {
-                        countdown--;
-                        if (countdown <= 0) {
-                            clearInterval(interval);
-                            // Chuyển hướng thẳng tới link sạch của Link4M, không giữ lại tham số API Token
-                            window.location.href = data.redirectTo;
-                        }
-                    }, 1000);
+                    setTimeout(() => {
+                        window.location.href = data.redirectTo;
+                    }, 2000);
 
                 } else {
-                    keyInput.value = "LỖI: PHÂN LỚP DỮ LIỆU 1 HẾT HẠN HOẶC BỊ XOÁ";
+                    keyInput.value = "LỖI: MÃ REDIRECT HẾT HẠN HOẶC KHÔNG TỒN TẠI";
                     showToast("TỪ CHỐI TRUY CẬP: TOKEN SAI LỆCH", true);
                 }
             } catch (error) {
                 keyInput.value = "LỖI: TRUY VẤN GATEWAY THẤT BẠI";
+                showToast("LỖI KẾT NỐI SERVER TẦNG 1", true);
             }
             return;
         }
@@ -255,27 +251,35 @@
         // ==========================================================
         if (anonymousID) {
             try {
-                currentDatabaseUrl = `${BASE_FIREBASE}${anonymousID}.json`;
-                const response = await fetch(currentDatabaseUrl);
+                const response = await fetch(`${BASE_FIREBASE}${anonymousID}.json`);
+                if (!response.ok) throw new Error("Firebase blocked / Bad rule");
+                
                 const data = await response.json();
                 
-                if (data && data.mapsTo) {
-                    keyInput.value = data.mapsTo;
-                    keyInput.classList.add('success');
-                    mainTitle.innerText = "XÁC THỰC HOÀN TẤT";
-                    subTitle.innerText = "// AN TOÀN - ĐÃ THU THẬP ĐỦ CHỨNG CHỈ QUẢNG CÁO";
-                    showToast("XÁC THỰC KHÁCH HÀNG THÀNH CÔNG!");
-                } else {
-                    keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
-                    showToast("MÃ XÁC THỰC KHÔNG HỢP LỆ", true);
+                if (data) {
+                    // Tối ưu hóa việc bóc tách dữ liệu: Chấp nhận cả cấu trúc Json Object hoặc Chuỗi String thuần túy
+                    const parsedKey = data.mapsTo || data.key || (typeof data === "string" ? data : null);
+                    
+                    if (parsedKey) {
+                        keyInput.value = parsedKey;
+                        keyInput.classList.add('success');
+                        mainTitle.innerText = "XÁC THỰC HOÀN TẤT";
+                        subTitle.innerText = "// AN TOÀN - ĐÃ THU THẬP ĐỦ CHỨNG CHỈ QUẢNG CÁO";
+                        showToast("XÁC THỰC KHÁCH HÀNG THÀNH CÔNG!");
+                        return;
+                    }
                 }
+                
+                keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
+                showToast("MÃ XÁC THỰC KHÔNG HỢP LỆ TRÊN HỆ THỐNG", true);
             } catch (error) { 
                 keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI"; 
+                showToast("LỖI ĐỌC DỮ LIỆU TỪ DATABASE", true);
             }
             return;
         }
 
-        // Không tìm thấy bất kỳ tham số định danh hợp quy nào
+        // Không tìm thấy bất kỳ tham số định danh hợp quy nào trên thanh địa chỉ URL
         keyInput.value = "LỖI: THIẾU THAM SỐ ID ĐỊNH DANH HỆ THỐNG";
         mainBtn.disabled = true;
     }
@@ -287,18 +291,13 @@
             try {
                 await navigator.clipboard.writeText(keyInput.value);
                 showToast("THÀNH CÔNG: ĐÃ SAO CHÉP. HÃY QUAY LẠI GAME ĐỂ KÍCH HOẠT.");
-                
-                if (currentDatabaseUrl !== "") {
-                    fetch(currentDatabaseUrl, { method: 'DELETE' });
-                }
             } catch (err) {
+                // Phương án dự phòng (Fallback) phòng trường hợp trình duyệt chặn Navigator Clipboard API
                 keyInput.select();
                 document.execCommand('copy');
                 showToast("THÀNH CÔNG: MÃ KEY ĐÃ ĐƯỢC LƯU VÀO KHAY NHỚ.");
-                if (currentDatabaseUrl !== "") {
-                    fetch(currentDatabaseUrl, { method: 'DELETE' });
-                }
             }
+            // ĐÃ BỎ HÀM DELETE ĐỂ TRÁNH TRƯỜNG HỢP XOÁ KEY KHI NGƯỜI DÙNG REFRESH HOẶC CHƯA DÁN VÀO GAME
         } else {
             showToast("TỪ CHỐI: MÃ KEY KHÔNG HỢP LỆ HOẶC CHƯA HOÀN THÀNH NHIỆM VỤ", true);
         }
