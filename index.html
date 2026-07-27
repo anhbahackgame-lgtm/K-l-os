@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEMAYBEOHUB - SYSTEM SECURE</title>
+    <title>MEMAYBEOHUB - GATEWAY v6.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #060814;
-            --bg-card: rgba(10, 15, 30, 0.85);
+            --bg-main: #121216;
+            --bg-card: #19191e;
+            --bg-surface: #23232a;
             --border-glow: #8b5cf6;
             --neon-cyan: #00f2fe;
-            --neon-red: #ff3366;
-            --text-muted: #64748b;
+            --neon-white: #ffffff;
+            --neon-yellow: #fbbf24;
+            --neon-red: #f43f5e;
+            --text-primary: #dcdcfe;
+            --text-secondary: #8c8c96;
+            --btn-getkey: #10b981;
+            --btn-copy: #8b5cf6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,119 +29,183 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background: var(--bg-main);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.12) 0px, transparent 50%);
-            color: #ffffff; 
+                radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 50%);
+            color: var(--text-primary); 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100vh; 
-            overflow: hidden;
+            min-height: 100vh; 
+            padding: 20px;
+            overflow-x: hidden;
         }
 
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
+        /* KHUNG CONTAINER CONTAINER NEON v6.0 */
         .container { 
             background: var(--bg-card); 
             padding: 40px 30px; 
             border-radius: 20px; 
-            border: 1px solid rgba(139, 92, 246, 0.25); 
             text-align: center; 
-            width: 420px; 
+            width: 100%;
+            max-width: 420px; 
             position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid #28282d;
             z-index: 5;
+            animation: popup 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .container::after {
+        /* VIỀN NEON XOAY */
+        .container::before {
             content: '';
             position: absolute;
-            top: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 40%; height: 3px;
-            background: linear-gradient(90deg, transparent, var(--border-glow), var(--neon-cyan), transparent);
-            box-shadow: 0 0 10px var(--border-glow);
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border-radius: 23px;
+            background: linear-gradient(45deg, var(--neon-white), var(--border-glow), var(--neon-cyan), var(--border-glow));
+            background-size: 300% 300%;
+            z-index: -1;
+            opacity: 0.4;
+            animation: neonGlow 4s linear infinite;
+        }
+
+        @keyframes neonGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes popup {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .icon-box {
+            width: 56px; height: 56px;
+            background: var(--bg-surface);
+            border-radius: 14px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .icon-box svg {
+            width: 28px; height: 28px;
+            fill: var(--neon-white);
         }
 
         h1 { 
-            font-size: 18px; 
+            font-size: 22px; 
             font-weight: 800;
-            letter-spacing: 2px;
-            color: #ffffff; 
-            margin-bottom: 8px; 
-            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neon-white); 
+            margin-bottom: 6px; 
         }
 
         .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        /* THÔNG BÁO XÓA KEY */
+        .notice-banner {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px dashed rgba(251, 191, 36, 0.4);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .notice-icon { font-size: 18px; }
+
+        .notice-text {
             font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
-            color: var(--text-muted);
-            margin-bottom: 35px;
-            letter-spacing: 1px;
+            color: var(--neon-yellow);
+            line-height: 1.4;
         }
 
         .input-wrapper {
-            position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         input { 
             width: 100%; 
             padding: 16px; 
-            background: #02040a; 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 10px; 
-            color: var(--neon-red); 
+            background: var(--bg-surface); 
+            border: 1px solid var(--border-glow); 
+            border-radius: 12px; 
+            color: var(--neon-cyan); 
             font-family: 'JetBrains Mono', monospace; 
             font-size: 13px; 
             text-align: center; 
             outline: none; 
             transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.15);
         }
 
-        input.success {
-            color: var(--neon-cyan) !important;
-            border-color: rgba(0, 242, 254, 0.3);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.1), inset 0 2px 4px rgba(0,0,0,0.8);
+        input.error-text {
+            color: var(--neon-red) !important;
+            border-color: rgba(244, 63, 94, 0.5);
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
         }
 
         button { 
-            width: 100%; 
-            padding: 15px; 
-            background: #ffffff;
+            flex: 1;
+            padding: 15px 10px; 
             border: none; 
             border-radius: 10px; 
-            color: #000000; 
             font-weight: 700; 
             cursor: pointer; 
             font-size: 13px; 
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        button:hover:not(:disabled) { 
-            background: var(--border-glow);
+        button.btn-copy {
+            background: var(--btn-copy);
             color: #ffffff;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
-            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        button.btn-copy:hover:not(:disabled) { 
+            background: #7c3aed;
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.8);
+            transform: translateY(-2px);
+        }
+
+        button.btn-getkey {
+            background: var(--btn-getkey);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        button.btn-getkey:hover:not(:disabled) {
+            background: #059669;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+            transform: translateY(-2px);
         }
 
         button:disabled {
-            background: #1e293b;
+            background: #2a2a32;
             color: #64748b;
+            box-shadow: none;
             cursor: not-allowed;
         }
 
@@ -144,21 +214,21 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 10;
+            z-index: 100;
         }
 
         .toast {
-            background: #0a0f1e;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #19191e;
+            border: 1px solid var(--border-glow);
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 12px;
             font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.5px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--neon-cyan);
         }
 
         .toast.show {
@@ -170,14 +240,26 @@
 <body>
 
 <div class="container">
-    <h1 id="mainTitle">MEMAYBEOHUB GATEWAY</h1>
-    <div class="subtitle" id="subTitle">// PHÂN LỚP GIẢI MÃ BẢO MẬT</div>
+    <div class="icon-box">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8s0 0 0 0z"/></svg>
+    </div>
+
+    <h1 id="mainTitle">MEMAYBEO HUB v6.0</h1>
+    <div class="subtitle" id="subTitle">Cổng tạo & xác thực Key tự động</div>
     
+    <div class="notice-banner">
+        <span class="notice-icon">⚠️</span>
+        <span class="notice-text">LƯU Ý: Tất cả mã Key sẽ tự động bị XÓA / HẾT HẠN sau 12 giờ. Vui lòng kích hoạt ngay!</span>
+    </div>
+
     <div class="input-wrapper">
-        <input type="text" id="keyInput" readonly value="ĐANG THẨM ĐỊNH CHỨNG CHỈ MÁY CHỦ...">
+        <input type="text" id="keyInput" readonly value="BẤM 'LẤY KEY MỚI' ĐỂ VƯỢT LINK">
     </div>
     
-    <button id="mainBtn" onclick="copyToClipboard()">SAO CHÉP MÃ KEY</button>
+    <div class="btn-group">
+        <button id="mainBtn" class="btn-copy" onclick="copyToClipboard()">SAO CHÉP KEY</button>
+        <button id="getKeyBtn" class="btn-getkey" onclick="generateNewKeyLink()">LẤY KEY MỚI</button>
+    </div>
 </div>
 
 <div class="toast-container">
@@ -186,120 +268,198 @@
 
 <script>
     const BASE_FIREBASE = "https://keyvip-eeae4-default-rtdb.firebaseio.com/";
+    const LINK4M_TOKEN  = "68f64fc13101924671364239";
+    const MY_WEB_URL    = "https://anhbahackgame-lgtm.github.io/K-l-os/";
+
+    let isCreating = false;
 
     function showToast(message, isError = false) {
         const toast = document.getElementById('toast');
         toast.innerText = message;
-        toast.style.borderColor = isError ? "rgba(255, 51, 102, 0.4)" : "rgba(0, 242, 254, 0.4)";
+        toast.style.borderColor = isError ? "var(--neon-red)" : "var(--border-glow)";
         toast.style.color = isError ? "var(--neon-red)" : "var(--neon-cyan)";
-        
         toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3500);
+        setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
+    function generateRandomID(prefix, length) {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let str = prefix + "_";
+        for (let i = 0; i < length; i++) {
+            str += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return str;
+    }
+
+    // =========================================================
+    // NÚT "LẤY KEY MỚI": TỰ ĐỘNG TẠO LINK RÚT GỌN VƯỢT KEY
+    // =========================================================
+    async function generateNewKeyLink() {
+        if (isCreating) return;
+        isCreating = true;
+
+        const getKeyBtn = document.getElementById('getKeyBtn');
+        const keyInput = document.getElementById('keyInput');
+        
+        getKeyBtn.innerText = "ĐANG TẠO LINK...";
+        getKeyBtn.disabled = true;
+        showToast("Đang kết nối Server để tạo chuỗi Link 2 tầng...");
+
+        try {
+            const newKey = generateRandomID("MATRIX", 8);
+            const pureSuffix = newKey.substring(7);
+            const nowMs = Date.now();
+
+            // 1. Lưu Key vào Firebase (hạn 360 phút / 6 tiếng hoặc 12 tiếng)
+            await fetch(`${BASE_FIREBASE}${newKey}.json`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    timeLeft: 720, // 12 tiếng = 720 phút
+                    initialTime: 720,
+                    status: "active",
+                    hwid: "",
+                    tier: "normal",
+                    createdAt: nowMs
+                })
+            });
+
+            // 2. Tạo ID_END cho tầng đích cuối
+            const idEnd = "ID_END_" + pureSuffix;
+            await fetch(`${BASE_FIREBASE}${idEnd}.json`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mapsTo: newKey, timeLeft: 15, createdAt: nowMs })
+            });
+
+            const finalTargetUrl = MY_WEB_URL + "?id=" + idEnd;
+
+            // 3. Tạo Link4M Lớp 2
+            let layer2Short = `https://link4m.co/st?api=${LINK4M_TOKEN}&url=${encodeURIComponent(finalTargetUrl)}`;
+            try {
+                const res2 = await fetch(`https://link4m.co/api-shorten?api=${LINK4M_TOKEN}&url=${encodeURIComponent(finalTargetUrl)}`);
+                const json2 = await res2.json();
+                if (json2 && (json2.shortenedUrl || json2.url)) {
+                    layer2Short = json2.shortenedUrl || json2.url;
+                }
+            } catch (e) {}
+
+            // 4. Tạo ID_MID cho tầng trung gian
+            const idMid = "ID_MID_" + pureSuffix;
+            await fetch(`${BASE_FIREBASE}${idMid}.json`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ redirectTo: layer2Short, timeLeft: 10, createdAt: nowMs })
+            });
+
+            const midTargetUrl = MY_WEB_URL + "?next=" + idMid;
+
+            // 5. Tạo Link4M Lớp 1
+            let finalShortLink = `https://link4m.co/st?api=${LINK4M_TOKEN}&url=${encodeURIComponent(midTargetUrl)}`;
+            try {
+                const res1 = await fetch(`https://link4m.co/api-shorten?api=${LINK4M_TOKEN}&url=${encodeURIComponent(midTargetUrl)}`);
+                const json1 = await res1.json();
+                if (json1 && (json1.shortenedUrl || json1.url)) {
+                    finalShortLink = json1.shortenedUrl || json1.url;
+                }
+            } catch (e) {}
+
+            // Hoàn tất: Hiển thị Link và mở sang tab mới cho người dùng
+            keyInput.value = finalShortLink;
+            showToast("TẠO LINK THÀNH CÔNG! ĐANG CHUYỂN HƯỚNG...");
+            
+            setTimeout(() => {
+                window.location.href = finalShortLink;
+            }, 1000);
+
+        } catch (error) {
+            showToast("LỖI TẠO LINK: " + error.message, true);
+        } finally {
+            isCreating = false;
+            getKeyBtn.innerText = "LẤY KEY MỚI";
+            getKeyBtn.disabled = false;
+        }
+    }
+
+    // =========================================================
+    // TỰ ĐỘNG XỬ LÝ URL TRẢ VỀ (TẦNG 1 HOẶC TẦNG 2)
+    // =========================================================
     async function resolveKey() {
         const urlParams = new URLSearchParams(window.location.search);
         
-        // Fix quét thông minh: Tự nhận dạng tất cả kiểu viết tham số hoa/thường từ các trang rút gọn link
         const idNext = urlParams.get('next') || urlParams.get('NEXT');
         const anonymousID = urlParams.get('id') || urlParams.get('ID') || urlParams.get('key') || urlParams.get('KEY');
         
         const keyInput = document.getElementById('keyInput');
         const mainTitle = document.getElementById('mainTitle');
         const subTitle = document.getElementById('subTitle');
-        const mainBtn = document.getElementById('mainBtn');
 
-        // ==========================================================
-        // TẦNG 1: CHUYỂN TIẾP TRÌNH DUYỆT SANG ĐƯỜNG LINK RÚT GỌN LỚP 2
-        // ==========================================================
+        // TẦNG 1: VƯỢT LINK 1 XONG -> REDIRECT SANG LINK 2
         if (idNext) {
-            mainTitle.innerText = "GATEWAY TẦNG 1 THÀNH CÔNG";
-            subTitle.innerText = "// ĐANG KẾT NỐI KHỐI DỮ LIỆU TẦNG ĐÍCH...";
-            keyInput.value = "ĐANG TẢI LIÊN KẾT RÚT GỌN LỚP 2...";
-            mainBtn.innerText = "ĐANG CHUYỂN HƯỚNG...";
-            mainBtn.disabled = true;
+            mainTitle.innerText = "TẦNG 1 HOÀN TẤT";
+            subTitle.innerText = "Đang kết nối liên kết tầng 2...";
+            keyInput.value = "ĐANG TẢI LINK RÚT GỌN TẦNG 2...";
 
             try {
                 const response = await fetch(`${BASE_FIREBASE}${idNext}.json`);
-                if (!response.ok) throw new Error("Firebase blocked / Bad rule");
-                
                 const data = await response.json();
                 
                 if (data && data.redirectTo) {
-                    keyInput.classList.add('success');
-                    showToast("PHÂN LUỒNG HỢP LỆ! CHUYỂN HƯỚNG SAU 2 GIÂY...");
-                    
-                    setTimeout(() => {
-                        window.location.href = data.redirectTo;
-                    }, 2000);
-
+                    showToast("XÁC THỰC TẦNG 1 THÀNH CÔNG! CHUYỂN HƯỚNG TẦNG 2...");
+                    setTimeout(() => window.location.href = data.redirectTo, 1500);
                 } else {
-                    keyInput.value = "LỖI: MÃ REDIRECT HẾT HẠN HOẶC KHÔNG TỒN TẠI";
-                    showToast("TỪ CHỐI TRUY CẬP: TOKEN SAI LỆCH", true);
+                    keyInput.value = "LỖI: MÃ TẦNG 1 ĐÃ HẾT HẠN";
+                    keyInput.classList.add('error-text');
+                    showToast("LINK ĐÃ QUÁ HẠN 10 PHÚT, VUI LÒNG BẤM LẤY KEY MỚI", true);
                 }
             } catch (error) {
-                keyInput.value = "LỖI: TRUY VẤN GATEWAY THẤT BẠI";
-                showToast("LỖI KẾT NỐI SERVER TẦNG 1", true);
+                keyInput.value = "LỖI KẾT NỐI SERVER";
+                keyInput.classList.add('error-text');
             }
             return;
         }
 
-        // ==========================================================
-        // TẦNG 2: VƯỢT XONG LINK 2 -> TRẢ VỀ TRANG WEB ĐỂ HIỂN THỊ KEY
-        // ==========================================================
+        // TẦNG 2: VƯỢT LINK 2 XONG -> HIỂN THỊ MÃ KEY HOÀN CHỈNH
         if (anonymousID) {
             try {
                 const response = await fetch(`${BASE_FIREBASE}${anonymousID}.json`);
-                if (!response.ok) throw new Error("Firebase blocked / Bad rule");
-                
                 const data = await response.json();
                 
                 if (data) {
-                    // Tối ưu hóa việc bóc tách dữ liệu: Chấp nhận cả cấu trúc Json Object hoặc Chuỗi String thuần túy
                     const parsedKey = data.mapsTo || data.key || (typeof data === "string" ? data : null);
-                    
                     if (parsedKey) {
                         keyInput.value = parsedKey;
-                        keyInput.classList.add('success');
                         mainTitle.innerText = "XÁC THỰC HOÀN TẤT";
-                        subTitle.innerText = "// AN TOÀN - ĐÃ THU THẬP ĐỦ CHỨNG CHỈ QUẢNG CÁO";
-                        showToast("XÁC THỰC KHÁCH HÀNG THÀNH CÔNG!");
+                        subTitle.innerText = "Mã Key của bạn đã sẵn sàng!";
+                        showToast("XÁC THỰC THÀNH CÔNG! BẤM SAO CHÉP MÃ KEY.");
                         return;
                     }
                 }
                 
-                keyInput.value = "LỖI: MÃ KEY KHÔNG TỒN TẠI HOẶC HẾT HẠN";
-                showToast("MÃ XÁC THỰC KHÔNG HỢP LỆ TRÊN HỆ THỐNG", true);
+                keyInput.value = "LỖI: KEY KHÔNG TỒN TẠI HOẶC ĐÃ XÓA";
+                keyInput.classList.add('error-text');
+                showToast("KEY ĐÃ HẾT HẠN, BẤM 'LẤY KEY MỚI'", true);
             } catch (error) { 
-                keyInput.value = "LỖI: TRUY VẤN DỮ LIỆU THẤT BẠI"; 
-                showToast("LỖI ĐỌC DỮ LIỆU TỪ DATABASE", true);
+                keyInput.value = "LỖI TRUY VẤN DATABASE"; 
+                keyInput.classList.add('error-text');
             }
             return;
         }
-
-        // Không tìm thấy bất kỳ tham số định danh hợp quy nào trên thanh địa chỉ URL
-        keyInput.value = "LỖI: THIẾU THAM SỐ ID ĐỊNH DANH HỆ THỐNG";
-        mainBtn.disabled = true;
     }
 
     async function copyToClipboard() {
         const keyInput = document.getElementById('keyInput');
-        
-        if (keyInput.value && !keyInput.value.startsWith("LỖI") && !keyInput.value.startsWith("ĐANG")) {
+        if (keyInput.value && !keyInput.value.startsWith("LỖI") && !keyInput.value.startsWith("BẤM") && !keyInput.value.startsWith("ĐANG")) {
             try {
                 await navigator.clipboard.writeText(keyInput.value);
-                showToast("THÀNH CÔNG: ĐÃ SAO CHÉP. HÃY QUAY LẠI GAME ĐỂ KÍCH HOẠT.");
+                showToast("ĐÃ SAO CHÉP KEY! HÃY VÀO GAME ĐỂ KÍCH HOẠT.");
             } catch (err) {
-                // Phương án dự phòng (Fallback) phòng trường hợp trình duyệt chặn Navigator Clipboard API
                 keyInput.select();
                 document.execCommand('copy');
-                showToast("THÀNH CÔNG: MÃ KEY ĐÃ ĐƯỢC LƯU VÀO KHAY NHỚ.");
+                showToast("ĐÃ SAO CHÉP MÃ KEY VÀO KHAY NHỚ.");
             }
-            // ĐÃ BỎ HÀM DELETE ĐỂ TRÁNH TRƯỜNG HỢP XOÁ KEY KHI NGƯỜI DÙNG REFRESH HOẶC CHƯA DÁN VÀO GAME
         } else {
-            showToast("TỪ CHỐI: MÃ KEY KHÔNG HỢP LỆ HOẶC CHƯA HOÀN THÀNH NHIỆM VỤ", true);
+            showToast("BẤM 'LẤY KEY MỚI' ĐỂ VƯỢT LINK LẤY KEY!", true);
         }
     }
 
