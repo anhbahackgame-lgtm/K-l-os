@@ -249,7 +249,7 @@
     
     <div class="notice-banner">
         <span class="notice-icon">⚠️</span>
-        <span class="notice-text">LƯU Ý: Tất cả mã Key sẽ tự động bị XÓA / HẾT HẠN sau 12 giờ. Vui lòng kích hoạt ngay!</span>
+        <span class="notice-text">LƯU Ý: Tất cả mã Key sẽ tự động bị XÓA / HẾT HẠN sau 6 giờ. Vui lòng kích hoạt ngay!</span>
     </div>
 
     <div class="input-wrapper">
@@ -310,13 +310,13 @@
             const pureSuffix = newKey.substring(7);
             const nowMs = Date.now();
 
-            // 1. Lưu Key vào Firebase (hạn 360 phút / 6 tiếng hoặc 12 tiếng)
+            // 1. Lưu Key vào Firebase (thời gian hiệu lực: 360 phút = 6 tiếng)
             await fetch(`${BASE_FIREBASE}${newKey}.json`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    timeLeft: 720, // 12 tiếng = 720 phút
-                    initialTime: 720,
+                    timeLeft: 360, // 6 tiếng = 360 phút
+                    initialTime: 360,
                     status: "active",
                     hwid: "",
                     tier: "normal",
