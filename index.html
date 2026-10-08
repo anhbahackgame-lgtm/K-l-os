@@ -2,284 +2,900 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEMAYBEOHUB - GATEWAY v6.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MEMAYBEO HUB - GATEWAY v6.1 VIP</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #121216;
-            --bg-card: #19191e;
-            --bg-surface: #23232a;
-            --border-glow: #8b5cf6;
-            --neon-cyan: #00f2fe;
-            --neon-white: #ffffff;
-            --neon-yellow: #fbbf24;
-            --neon-red: #f43f5e;
-            --text-primary: #dcdcfe;
-            --text-secondary: #8c8c96;
-            --btn-getkey: #10b981;
-            --btn-copy: #8b5cf6;
+            --bg-void: #07070a;
+            --bg-card: rgba(18, 18, 25, 0.78);
+            --bg-surface: rgba(28, 28, 38, 0.65);
+            --bg-input: rgba(14, 14, 20, 0.85);
+            --primary: #9333ea;
+            --primary-glow: #a855f7;
+            --cyan-neon: #00f2fe;
+            --cyan-glow: rgba(0, 242, 254, 0.4);
+            --gold-vip: #f59e0b;
+            --gold-glow: rgba(245, 158, 11, 0.45);
+            --emerald-neon: #10b981;
+            --rose-neon: #f43f5e;
+            --text-main: #f1f1fc;
+            --text-muted: #9494a8;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(168, 85, 247, 0.4);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-main);
-            background-image: 
-                radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 50%);
-            color: var(--text-primary); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 20px;
-            overflow-x: hidden;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* KHUNG CONTAINER CONTAINER NEON v6.0 */
-        .container { 
-            background: var(--bg-card); 
-            padding: 40px 30px; 
-            border-radius: 20px; 
-            text-align: center; 
-            width: 100%;
-            max-width: 420px; 
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-            border: 1px solid #28282d;
-            z-index: 5;
-            animation: popup 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* VIỀN NEON XOAY */
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -3px; left: -3px; right: -3px; bottom: -3px;
-            border-radius: 23px;
-            background: linear-gradient(45deg, var(--neon-white), var(--border-glow), var(--neon-cyan), var(--border-glow));
-            background-size: 300% 300%;
-            z-index: -1;
-            opacity: 0.4;
-            animation: neonGlow 4s linear infinite;
-        }
-
-        @keyframes neonGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes popup {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .icon-box {
-            width: 56px; height: 56px;
-            background: var(--bg-surface);
-            border-radius: 14px;
-            margin: 0 auto 16px auto;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-void);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            padding: 24px 16px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .icon-box svg {
-            width: 28px; height: 28px;
-            fill: var(--neon-white);
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.65;
         }
 
-        h1 { 
-            font-size: 22px; 
+        .ambient-glow {
+            position: fixed;
+            width: 480px;
+            height: 480px;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.25;
+            animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
+
+        .glow-1 {
+            top: -10%;
+            left: 10%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+        }
+
+        .glow-2 {
+            bottom: -15%;
+            right: 10%;
+            background: radial-gradient(circle, var(--cyan-neon) 0%, transparent 70%);
+            animation-delay: -4s;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(0.9) translate(0, 0); opacity: 0.18; }
+            100% { transform: scale(1.15) translate(30px, 20px); opacity: 0.32; }
+        }
+
+        .gateway-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-card);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border-radius: 28px;
+            padding: 36px 28px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85),
+                        0 0 0 1px var(--border-glass),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Aurora moving border frame */
+        .gateway-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 30px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.6), rgba(0, 242, 254, 0.3), rgba(245, 158, 11, 0.4), rgba(168, 85, 247, 0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0.75;
+            animation: borderRotate 6s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .header-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .server-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .server-dot {
+            width: 7px;
+            height: 7px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.4; }
+        }
+
+        .version-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
+
+        /* Brand Icon Shield */
+        .brand-icon-wrapper {
+            position: relative;
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 16px;
+        }
+
+        .brand-icon-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(0, 242, 254, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px var(--border-glow);
+            transform: rotate(-3deg);
+            transition: all 0.4s ease;
+        }
+
+        .gateway-card:hover .brand-icon-bg {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 0 12px 30px rgba(168, 85, 247, 0.35);
+        }
+
+        .brand-icon-bg svg {
+            width: 32px;
+            height: 32px;
+            fill: #ffffff;
+            filter: drop-shadow(0 2px 8px rgba(0, 242, 254, 0.6));
+        }
+
+        h1.title {
+            font-size: 24px;
             font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--neon-white); 
-            margin-bottom: 6px; 
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #ffffff 30%, #c4b5fd 75%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
         }
 
         .subtitle {
             font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 25px;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+            font-weight: 500;
         }
 
-        /* THÔNG BÁO XÓA KEY */
-        .notice-banner {
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px dashed rgba(251, 191, 36, 0.4);
-            border-radius: 12px;
+        .notice-card {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02));
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 14px;
             padding: 12px 14px;
-            margin-bottom: 25px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notice-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gold-vip);
+            box-shadow: 0 0 8px var(--gold-vip);
+        }
+
+        .notice-icon-circle {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .notice-body {
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: #fde68a;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .steps-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            text-align: left;
-        }
-
-        .notice-icon { font-size: 18px; }
-
-        .notice-text {
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--neon-yellow);
-            line-height: 1.4;
-        }
-
-        .input-wrapper {
+            justify-content: space-between;
             margin-bottom: 20px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
-        input { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--bg-surface); 
-            border: 1px solid var(--border-glow); 
-            border-radius: 12px; 
-            color: var(--neon-cyan); 
-            font-family: 'JetBrains Mono', monospace; 
-            font-size: 13px; 
-            text-align: center; 
-            outline: none; 
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .step-num {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .step-item.active .step-num {
+            background: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .step-item.active {
+            color: #ffffff;
+        }
+
+        .step-divider {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 10px;
+        }
+
+        .terminal-box {
+            position: relative;
+            margin-bottom: 20px;
+            background: var(--bg-input);
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            border-radius: 16px;
+            padding: 6px 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45),
+                        inset 0 2px 4px rgba(0, 0, 0, 0.6);
             transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.15);
+        }
+
+        .terminal-box:focus-within, .terminal-box.active {
+            border-color: var(--cyan-neon);
+            box-shadow: 0 0 20px var(--cyan-glow), inset 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 10px 2px;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 6px;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .t-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .t-red { background: #ef4444; }
+        .t-yellow { background: #f59e0b; }
+        .t-green { background: #10b981; }
+
+        .terminal-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input#keyInput {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 10px 12px;
+            color: var(--cyan-neon);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+            user-select: all;
         }
 
         input.error-text {
-            color: var(--neon-red) !important;
-            border-color: rgba(244, 63, 94, 0.5);
-            box-shadow: 0 0 10px rgba(244, 63, 94, 0.2);
+            color: var(--rose-neon) !important;
+            text-shadow: 0 0 10px rgba(244, 63, 94, 0.5) !important;
         }
 
-        .btn-group {
-            display: flex;
+        input.vip-text {
+            color: #fde047 !important;
+            text-shadow: 0 0 12px rgba(245, 158, 11, 0.6) !important;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 10px;
+            margin-bottom: 12px;
         }
 
-        button { 
-            flex: 1;
-            padding: 15px 10px; 
-            border: none; 
-            border-radius: 10px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            font-size: 13px; 
-            transition: all 0.3s ease;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            display: flex;
-            justify-content: center;
+        .btn {
+            position: relative;
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            letter-spacing: 0.2px;
+            min-height: 48px;
         }
 
-        button.btn-copy {
-            background: var(--btn-copy);
+        .btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        /* Button Copy */
+        .btn-copy {
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
             color: #ffffff;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 18px rgba(147, 51, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        button.btn-copy:hover:not(:disabled) { 
-            background: #7c3aed;
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.8);
+        .btn-copy:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.7);
             transform: translateY(-2px);
         }
 
-        button.btn-getkey {
-            background: var(--btn-getkey);
+        /* Button Key Normal */
+        .btn-normal {
+            background: linear-gradient(135deg, #059669, #10b981);
             color: #ffffff;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        button.btn-getkey:hover:not(:disabled) {
-            background: #059669;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+        .btn-normal:hover:not(:disabled) {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
             transform: translateY(-2px);
         }
 
-        button:disabled {
-            background: #2a2a32;
-            color: #64748b;
-            box-shadow: none;
+        /* Button VIP */
+        .btn-vip-epic {
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
+            color: #171103;
+            box-shadow: 0 6px 25px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            font-weight: 800;
+            font-size: 13.5px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-vip-epic::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: skewX(-25deg);
+            animation: vipShine 3.5s infinite;
+        }
+
+        @keyframes vipShine {
+            0% { left: -100%; }
+            30%, 100% { left: 160%; }
+        }
+
+        .btn-vip-epic:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.75);
+            filter: brightness(1.08);
+        }
+
+        .btn:disabled {
+            background: rgba(40, 40, 52, 0.7) !important;
+            color: #64748b !important;
+            box-shadow: none !important;
             cursor: not-allowed;
+            transform: none !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
         }
 
-        .toast-container {
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .footer-link {
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .footer-link:hover {
+            color: var(--cyan-neon);
+        }
+
+        /* Guide collapsible drawer */
+        .guide-box {
+            margin-top: 14px;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            text-align: left;
+            font-size: 11px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .guide-box.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast system */
+        .toast-wrapper {
             position: fixed;
-            bottom: 30px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 100;
+            z-index: 999;
+            pointer-events: none;
+            width: 90%;
+            max-width: 420px;
         }
 
-        .toast {
-            background: #19191e;
+        .toast-pill {
+            background: rgba(20, 20, 28, 0.95);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border-glow);
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 12px;
+            padding: 12px 18px;
+            border-radius: 14px;
             font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            font-size: 12px;
+            color: var(--cyan-neon);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(168, 85, 247, 0.25);
+            text-align: center;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: var(--neon-cyan);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .toast.show {
+        .toast-pill.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+        }
+
+        .toast-pill.error {
+            border-color: rgba(244, 63, 94, 0.6);
+            color: var(--rose-neon);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(244, 63, 94, 0.3);
+        }
+
+        .toast-pill.vip {
+            border-color: rgba(245, 158, 11, 0.6);
+            color: #fde047;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="icon-box">
-        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8s0 0 0 0z"/></svg>
+<canvas id="bgCanvas"></canvas>
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+
+<main class="gateway-card" role="main">
+    <!-- Header status info -->
+    <div class="header-status-bar">
+        <div class="server-badge">
+            <span class="server-dot"></span>
+            <span>SYSTEM ACTIVE</span>
+        </div>
+        <div class="version-badge">HUB v6.1 • SECURE</div>
     </div>
 
-    <h1 id="mainTitle">MEMAYBEO HUB v6.0</h1>
-    <div class="subtitle" id="subTitle">Cổng tạo & xác thực Key tự động</div>
-    
-    <div class="notice-banner">
-        <span class="notice-icon">⚠️</span>
-        <span class="notice-text">LƯU Ý: Tất cả mã Key sẽ tự động bị XÓA / HẾT HẠN sau 6 giờ. Vui lòng kích hoạt ngay!</span>
+    <div class="brand-icon-wrapper">
+        <div class="brand-icon-bg">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+        </div>
     </div>
 
-    <div class="input-wrapper">
-        <input type="text" id="keyInput" readonly value="BẤM 'LẤY KEY MỚI' ĐỂ VƯỢT LINK">
-    </div>
-    
-    <div class="btn-group">
-        <button id="mainBtn" class="btn-copy" onclick="copyToClipboard()">SAO CHÉP KEY</button>
-        <button id="getKeyBtn" class="btn-getkey" onclick="generateNewKeyLink()">LẤY KEY MỚI</button>
-    </div>
-</div>
+    <h1 class="title" id="mainTitle">MEMAYBEO HUB v6.1</h1>
+    <p class="subtitle" id="subTitle">Cổng xác thực &amp; cấp phát mã Key tự động</p>
 
-<div class="toast-container">
-    <div id="toast" class="toast"></div>
+    <!-- Flow indicator steps -->
+    <div class="steps-container">
+        <div class="step-item active" id="step1">
+            <span class="step-num">1</span>
+            <span>Chọn Key</span>
+        </div>
+        <span class="step-divider">➔</span>
+        <div class="step-item" id="step2">
+            <span class="step-num">2</span>
+            <span>Vượt Link</span>
+        </div>
+        <span class="step-divider">➔</span>
+        <div class="step-item" id="step3">
+            <span class="step-num">3</span>
+            <span>Nhận Mã</span>
+        </div>
+    </div>
+
+    <!-- Warning / info banner -->
+    <div class="notice-card">
+        <div class="notice-icon-circle">⚡</div>
+        <div class="notice-body">
+            <strong>LƯU Ý:</strong> Key tự kích hoạt <strong>hạn 6 giờ</strong> ngay sau khi tạo. Vui lòng sao chép và dán vào script ngay!
+        </div>
+    </div>
+
+    <div class="terminal-box" id="terminalBox">
+        <div class="terminal-header">
+            <div class="terminal-dots">
+                <div class="t-dot t-red"></div>
+                <div class="t-dot t-yellow"></div>
+                <div class="t-dot t-green"></div>
+            </div>
+            <span id="terminalStatus">READY / CHỜ THAO TÁC</span>
+        </div>
+        <div class="terminal-input-wrapper">
+            <input type="text" id="keyInput" readonly value="BẤM 'LẤY KEY' ĐỂ VƯỢT LINK" aria-label="Mã key">
+        </div>
+    </div>
+
+    <div class="btn-grid">
+        <button id="mainBtn" class="btn btn-copy" onclick="copyToClipboard()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="copyBtnText">SAO CHÉP KEY</span>
+        </button>
+
+        <button id="getKeyBtn" class="btn btn-normal" onclick="generateNewKeyLink()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span id="normalBtnText">KEY (2 LINK)</span>
+        </button>
+    </div>
+
+    <button id="vipBtn" class="btn btn-vip-epic" onclick="generateVipKeyLink()">
+        <span>★ KEY VIP SIÊU TỐC — VƯỢT 4 LINK ★</span>
+    </button>
+
+    <div class="footer-links">
+        <span class="footer-link" onclick="toggleGuide()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Hướng dẫn vượt link
+        </span>
+        <span>•</span>
+        <span class="footer-link" onclick="reloadClean()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6"></path>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            Làm mới cổng
+        </span>
+    </div>
+
+    <div class="guide-box" id="guideBox">
+        <strong>📌 Cách vượt link lấy key nhanh nhất:</strong><br>
+        1. Bấm <strong>Key Thường (2 Link)</strong> hoặc <strong>Key VIP (4 Link)</strong>.<br>
+        2. Vượt trang quảng cáo captcha theo từng bước đếm ngược.<br>
+        3. Sau khi hết các lớp link, hệ thống sẽ tự động chuyển bạn về đây và tạo sẵn mã Key.<br>
+        4. Bấm <strong>Sao chép Key</strong> và dán vào game để chiến!
+    </div>
+</main>
+
+<div class="toast-wrapper">
+    <div id="toast" class="toast-pill">
+        <span id="toastIcon">🚀</span>
+        <span id="toastMessage">Sẵn sàng xác thực...</span>
+    </div>
 </div>
 
 <script>
+    // Tạo hiệu ứng âm thanh cyber futuristic trực tiếp bằng Web Audio API
+    let audioCtx = null;
+    function playBeep(type = 'click') {
+        try {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) audioCtx = new AudioContextClass();
+            }
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.08);
+                osc.frequency.setValueAtTime(783.99, now + 0.16);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.28);
+                osc.start(now);
+                osc.stop(now + 0.28);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(260, now);
+                osc.frequency.linearRampToValueAtTime(140, now + 0.15);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+        } catch(e) {}
+    }
+
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class CyberParticle {
+        constructor() {
+            this.reset();
+        }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.8;
+            this.speedX = (Math.random() - 0.5) * 0.4;
+            this.speedY = (Math.random() - 0.5) * 0.4;
+            this.alpha = Math.random() * 0.5 + 0.2;
+            this.color = Math.random() > 0.5 ? '#a855f7' : '#00f2fe';
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                this.reset();
+            }
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    for (let i = 0; i < 45; i++) {
+        particles.push(new CyberParticle());
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 85) {
+                    ctx.save();
+                    ctx.strokeStyle = '#a855f7';
+                    ctx.globalAlpha = (1 - dist / 85) * 0.12;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
     const BASE_FIREBASE = "https://keyvip-eeae4-default-rtdb.firebaseio.com/";
     const LINK4M_TOKEN  = "68f64fc13101924671364239";
+    const LAYMA_TOKEN   = "946921d61e6e1dde2e235c1def3fa3c2";
     const MY_WEB_URL    = "https://anhbahackgame-lgtm.github.io/K-l-os/";
 
     let isCreating = false;
+    let toastTimeout = null;
 
-    function showToast(message, isError = false) {
+    function showToast(message, type = 'info') {
         const toast = document.getElementById('toast');
-        toast.innerText = message;
-        toast.style.borderColor = isError ? "var(--neon-red)" : "var(--border-glow)";
-        toast.style.color = isError ? "var(--neon-red)" : "var(--neon-cyan)";
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3500);
+        const msg = document.getElementById('toastMessage');
+        const icon = document.getElementById('toastIcon');
+
+        msg.innerText = message;
+        toast.className = 'toast-pill active';
+
+        if (type === 'error') {
+            toast.classList.add('error');
+            icon.innerText = '❌';
+            playBeep('error');
+        } else if (type === 'vip') {
+            toast.classList.add('vip');
+            icon.innerText = '⭐';
+            playBeep('success');
+        } else if (type === 'success') {
+            icon.innerText = '✅';
+            playBeep('success');
+        } else {
+            icon.innerText = '⚡';
+            playBeep('click');
+        }
+
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('active');
+        }, 3600);
+    }
+
+    function toggleGuide() {
+        playBeep('click');
+        const box = document.getElementById('guideBox');
+        box.classList.toggle('show');
+    }
+
+    function reloadClean() {
+        playBeep('click');
+        window.location.href = window.location.origin + window.location.pathname;
+    }
+
+    function setStep(stepIndex) {
+        for (let i = 1; i <= 3; i++) {
+            const el = document.getElementById('step' + i);
+            if (el) {
+                if (i <= stepIndex) el.classList.add('active');
+                else el.classList.remove('active');
+            }
+        }
     }
 
     function generateRandomID(prefix, length) {
@@ -291,179 +907,376 @@
         return str;
     }
 
-    // =========================================================
-    // NÚT "LẤY KEY MỚI": TỰ ĐỘNG TẠO LINK RÚT GỌN VƯỢT KEY
-    // =========================================================
+    async function fbPatch(path, data) {
+        const res = await fetch(`${BASE_FIREBASE}${path}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error("Firebase phản hồi mã: " + res.status);
+    }
+
+    function fbDelete(path) {
+        fetch(`${BASE_FIREBASE}${path}.json`, { method: 'DELETE' }).catch(() => {});
+    }
+
+    function findShortLink(obj, originalUrl, depth = 0) {
+        if (typeof obj === "string") {
+            return (obj.startsWith("http") && obj !== originalUrl) ? obj : null;
+        }
+        if (typeof obj !== "object" || obj === null || depth > 6) return null;
+        const priority = ["shortenedUrl", "shortlink", "shortLink", "shortUrl", "short_url", "shortened", "url", "link", "result"];
+        for (const key of priority) {
+            if (obj[key] !== undefined) {
+                const found = findShortLink(obj[key], originalUrl, depth + 1);
+                if (found) return found;
+            }
+        }
+        for (const key in obj) {
+            const found = findShortLink(obj[key], originalUrl, depth + 1);
+            if (found) return found;
+        }
+        return null;
+    }
+
+    async function shortenViaLayma(targetUrl) {
+        const api = `https://api.layma.net/api/admin/shortlink/quicklink?tokenUser=${LAYMA_TOKEN}&url=${encodeURIComponent(targetUrl)}&link_du_phong=${encodeURIComponent(targetUrl)}`;
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                const res = await fetch(api);
+                const text = (await res.text()).trim();
+                if (text.startsWith("http")) return text;
+                let data = null;
+                try { data = JSON.parse(text); } catch (e) {}
+                const found = findShortLink(data, targetUrl);
+                if (found) return found;
+            } catch (e) {}
+            await new Promise(r => setTimeout(r, 500));
+        }
+        return null;
+    }
+
+    async function shortenViaLink4m(targetUrl) {
+        try {
+            const res = await fetch(`https://link4m.co/api-shorten?api=${LINK4M_TOKEN}&url=${encodeURIComponent(targetUrl)}`);
+            const json = await res.json();
+            if (json && (json.shortenedUrl || json.url)) return json.shortenedUrl || json.url;
+        } catch (e) {}
+        return `https://link4m.co/st?api=${LINK4M_TOKEN}&url=${encodeURIComponent(targetUrl)}`;
+    }
+
+    async function shortenLink(targetUrl, service) {
+        if (service === "layma") {
+            const out = await shortenViaLayma(targetUrl);
+            if (out) return out;
+            showToast("LAYMA BẬN — TỰ ĐỘNG CHUYỂN DÙNG LINK4M", "info");
+            return await shortenViaLink4m(targetUrl);
+        }
+        return await shortenViaLink4m(targetUrl);
+    }
+
     async function generateNewKeyLink() {
         if (isCreating) return;
+        playBeep('click');
         isCreating = true;
+        setStep(2);
 
         const getKeyBtn = document.getElementById('getKeyBtn');
+        const vipBtn = document.getElementById('vipBtn');
         const keyInput = document.getElementById('keyInput');
-        
-        getKeyBtn.innerText = "ĐANG TẠO LINK...";
+        const normalBtnText = document.getElementById('normalBtnText');
+        const terminalStatus = document.getElementById('terminalStatus');
+
         getKeyBtn.disabled = true;
-        showToast("Đang kết nối Server để tạo chuỗi Link 2 tầng...");
+        vipBtn.disabled = true;
+        normalBtnText.innerHTML = `<span class="spinner"></span> ĐANG TẠO...`;
+        terminalStatus.innerText = "CONNECTING DATABASE (2 TIER)...";
+        showToast("Đang tạo chuỗi 2 tầng bảo vệ Link4M...", "info");
 
         try {
             const newKey = generateRandomID("MATRIX", 8);
             const pureSuffix = newKey.substring(7);
             const nowMs = Date.now();
 
-            // 1. Lưu Key vào Firebase (thời gian hiệu lực: 360 phút = 6 tiếng)
-            await fetch(`${BASE_FIREBASE}${newKey}.json`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    timeLeft: 360, // 6 tiếng = 360 phút
-                    initialTime: 360,
-                    status: "active",
-                    hwid: "",
-                    tier: "normal",
-                    createdAt: nowMs
-                })
+            // 1. Lưu Key vào Firebase (6 giờ = 360 phút)
+            await fbPatch(newKey, {
+                timeLeft: 360,
+                initialTime: 360,
+                status: "active",
+                hwid: "",
+                maxDevices: 1,
+                tier: "normal",
+                note: "Get Key Dual Link4M (Web)",
+                createdAt: nowMs
             });
 
-            // 2. Tạo ID_END cho tầng đích cuối
+            // 2. ID_END (15 phút)
             const idEnd = "ID_END_" + pureSuffix;
-            await fetch(`${BASE_FIREBASE}${idEnd}.json`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mapsTo: newKey, timeLeft: 15, createdAt: nowMs })
-            });
+            await fbPatch(idEnd, { mapsTo: newKey, timeLeft: 15, createdAt: nowMs });
+            setTimeout(() => fbDelete(idEnd), 900000);
 
             const finalTargetUrl = MY_WEB_URL + "?id=" + idEnd;
 
-            // 3. Tạo Link4M Lớp 2
-            let layer2Short = `https://link4m.co/st?api=${LINK4M_TOKEN}&url=${encodeURIComponent(finalTargetUrl)}`;
-            try {
-                const res2 = await fetch(`https://link4m.co/api-shorten?api=${LINK4M_TOKEN}&url=${encodeURIComponent(finalTargetUrl)}`);
-                const json2 = await res2.json();
-                if (json2 && (json2.shortenedUrl || json2.url)) {
-                    layer2Short = json2.shortenedUrl || json2.url;
-                }
-            } catch (e) {}
+            // 3. Link4M Lớp 2
+            const layer2Short = await shortenViaLink4m(finalTargetUrl);
 
-            // 4. Tạo ID_MID cho tầng trung gian
+            // 4. ID_MID (10 phút)
             const idMid = "ID_MID_" + pureSuffix;
-            await fetch(`${BASE_FIREBASE}${idMid}.json`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ redirectTo: layer2Short, timeLeft: 10, createdAt: nowMs })
-            });
+            await fbPatch(idMid, { redirectTo: layer2Short, timeLeft: 10, createdAt: nowMs });
+            setTimeout(() => fbDelete(idMid), 600000);
 
             const midTargetUrl = MY_WEB_URL + "?next=" + idMid;
 
-            // 5. Tạo Link4M Lớp 1
-            let finalShortLink = `https://link4m.co/st?api=${LINK4M_TOKEN}&url=${encodeURIComponent(midTargetUrl)}`;
-            try {
-                const res1 = await fetch(`https://link4m.co/api-shorten?api=${LINK4M_TOKEN}&url=${encodeURIComponent(midTargetUrl)}`);
-                const json1 = await res1.json();
-                if (json1 && (json1.shortenedUrl || json1.url)) {
-                    finalShortLink = json1.shortenedUrl || json1.url;
-                }
-            } catch (e) {}
+            // 5. Link4M Lớp 1
+            const finalShortLink = await shortenViaLink4m(midTargetUrl);
 
-            // Hoàn tất: Hiển thị Link và mở sang tab mới cho người dùng
             keyInput.value = finalShortLink;
-            showToast("TẠO LINK THÀNH CÔNG! ĐANG CHUYỂN HƯỚNG...");
-            
-            setTimeout(() => {
-                window.location.href = finalShortLink;
-            }, 1000);
+            terminalStatus.innerText = "CHUYỂN HƯỚNG TRONG 1S...";
+            showToast("Tạo link thành công! Đang chuyển hướng...", "success");
+            setTimeout(() => { window.location.href = finalShortLink; }, 1000);
 
         } catch (error) {
-            showToast("LỖI TẠO LINK: " + error.message, true);
+            terminalStatus.innerText = "ERROR CODE: 500";
+            showToast("Lỗi tạo link: " + error.message, "error");
+            setStep(1);
         } finally {
             isCreating = false;
-            getKeyBtn.innerText = "LẤY KEY MỚI";
+            normalBtnText.innerText = "KEY (2 LINK)";
             getKeyBtn.disabled = false;
+            vipBtn.disabled = false;
         }
     }
 
-    // =========================================================
-    // TỰ ĐỘNG XỬ LÝ URL TRẢ VỀ (TẦNG 1 HOẶC TẦNG 2)
-    // =========================================================
+    async function generateVipKeyLink() {
+        if (isCreating) return;
+        playBeep('click');
+        isCreating = true;
+        setStep(2);
+
+        const getKeyBtn = document.getElementById('getKeyBtn');
+        const vipBtn = document.getElementById('vipBtn');
+        const keyInput = document.getElementById('keyInput');
+        const terminalStatus = document.getElementById('terminalStatus');
+
+        getKeyBtn.disabled = true;
+        vipBtn.disabled = true;
+        vipBtn.innerHTML = `<span class="spinner"></span> ĐANG KHỞI TẠO 4 LỚP VIP...`;
+        terminalStatus.innerText = "INITIALIZING VIP 4-TIER CHAIN...";
+        showToast("Đang thiết lập chuỗi VIP 4 lớp (Link4M + Layma)...", "vip");
+
+        try {
+            const newKey = generateRandomID("VIPMATRIX", 8);
+            const pureSuffix = newKey.substring(10);
+            const nowMs = Date.now();
+
+            await fbPatch(newKey, {
+                timeLeft: 360,
+                initialTime: 360,
+                status: "active",
+                hwid: "",
+                maxDevices: 1,
+                tier: "VIP",
+                note: "Get Key VIP 4 Link (Web)",
+                createdAt: nowMs
+            });
+
+            // LỚP 4: LAYMA.NET
+            terminalStatus.innerText = "BUILDING LAYER 4/4...";
+            const idVip4 = "ID_VIP4_" + pureSuffix;
+            await fbPatch(idVip4, { mapsTo: newKey, timeLeft: 20, createdAt: nowMs });
+            setTimeout(() => fbDelete(idVip4), 1200000);
+            const urlL4 = MY_WEB_URL + "?id=" + idVip4;
+            const short4 = await shortenLink(urlL4, "layma");
+
+            // LỚP 3: LAYMA.NET
+            terminalStatus.innerText = "BUILDING LAYER 3/4...";
+            const idVip3 = "ID_VIP3_" + pureSuffix;
+            await fbPatch(idVip3, { redirectTo: short4, timeLeft: 15, createdAt: nowMs });
+            setTimeout(() => fbDelete(idVip3), 900000);
+            const urlL3 = MY_WEB_URL + "?next=" + idVip3;
+            const short3 = await shortenLink(urlL3, "layma");
+
+            // LỚP 2: LINK4M
+            terminalStatus.innerText = "BUILDING LAYER 2/4...";
+            const idVip2 = "ID_VIP2_" + pureSuffix;
+            await fbPatch(idVip2, { redirectTo: short3, timeLeft: 10, createdAt: nowMs });
+            setTimeout(() => fbDelete(idVip2), 600000);
+            const urlL2 = MY_WEB_URL + "?next=" + idVip2;
+            const short2 = await shortenLink(urlL2, "link4m");
+
+            // LỚP 1: LINK4M
+            terminalStatus.innerText = "BUILDING LAYER 1/4...";
+            const idVip1 = "ID_VIP1_" + pureSuffix;
+            await fbPatch(idVip1, { redirectTo: short2, timeLeft: 5, createdAt: nowMs });
+            setTimeout(() => fbDelete(idVip1), 300000);
+            const urlL1 = MY_WEB_URL + "?next=" + idVip1;
+            const finalShortLink = await shortenLink(urlL1, "link4m");
+
+            keyInput.value = finalShortLink;
+            keyInput.className = "vip-text";
+            terminalStatus.innerText = "VIP CHAIN READY!";
+            showToast("Khởi tạo VIP 4 lớp thành công! Đang chuyển hướng...", "vip");
+            setTimeout(() => { window.location.href = finalShortLink; }, 1000);
+
+        } catch (error) {
+            terminalStatus.innerText = "VIP ERROR: TIMEOUT";
+            showToast("Lỗi tạo chuỗi VIP: " + error.message, "error");
+            setStep(1);
+        } finally {
+            isCreating = false;
+            vipBtn.innerHTML = `<span>★ KEY VIP SIÊU TỐC — VƯỢT 4 LINK ★</span>`;
+            getKeyBtn.disabled = false;
+            vipBtn.disabled = false;
+        }
+    }
+
+    function parseLayerInfo(id) {
+        if (!id) return null;
+        const map = {
+            "ID_VIP1_": { cur: 1, total: 4, vip: true },
+            "ID_VIP2_": { cur: 2, total: 4, vip: true },
+            "ID_VIP3_": { cur: 3, total: 4, vip: true },
+            "ID_VIP4_": { cur: 4, total: 4, vip: true },
+            "ID_MID_":  { cur: 1, total: 2, vip: false },
+            "ID_END_":  { cur: 2, total: 2, vip: false }
+        };
+        for (const prefix in map) {
+            if (id.startsWith(prefix)) return map[prefix];
+        }
+        return null;
+    }
+
     async function resolveKey() {
         const urlParams = new URLSearchParams(window.location.search);
-        
         const idNext = urlParams.get('next') || urlParams.get('NEXT');
         const anonymousID = urlParams.get('id') || urlParams.get('ID') || urlParams.get('key') || urlParams.get('KEY');
-        
+
         const keyInput = document.getElementById('keyInput');
         const mainTitle = document.getElementById('mainTitle');
         const subTitle = document.getElementById('subTitle');
+        const terminalStatus = document.getElementById('terminalStatus');
 
-        // TẦNG 1: VƯỢT LINK 1 XONG -> REDIRECT SANG LINK 2
+        // TRƯỜNG HỢP: TẦNG TRUNG GIAN ĐANG CHUYỂN TIẾP
         if (idNext) {
-            mainTitle.innerText = "TẦNG 1 HOÀN TẤT";
-            subTitle.innerText = "Đang kết nối liên kết tầng 2...";
-            keyInput.value = "ĐANG TẢI LINK RÚT GỌN TẦNG 2...";
+            setStep(2);
+            const info = parseLayerInfo(idNext);
+            const cur = info ? info.cur : 1;
+            const total = info ? info.total : 2;
+            const vipTag = info && info.vip ? " [VIP]" : "";
+
+            mainTitle.innerText = `LỚP ${cur}/${total} HOÀN TẤT ${vipTag}`;
+            subTitle.innerText = `Đang xác thực bảo mật và nạp liên kết tiếp theo...`;
+            keyInput.value = `ĐANG TẢI LỚP ${cur + 1}/${total}...`;
+            terminalStatus.innerText = `STEP ${cur} OF ${total} VERIFIED`;
 
             try {
                 const response = await fetch(`${BASE_FIREBASE}${idNext}.json`);
                 const data = await response.json();
-                
+
                 if (data && data.redirectTo) {
-                    showToast("XÁC THỰC TẦNG 1 THÀNH CÔNG! CHUYỂN HƯỚNG TẦNG 2...");
-                    setTimeout(() => window.location.href = data.redirectTo, 1500);
+                    showToast(`Vượt lớp ${cur}/${total} thành công! Đang sang lớp ${cur + 1}...`, "success");
+                    setTimeout(() => { window.location.href = data.redirectTo; }, 1400);
                 } else {
-                    keyInput.value = "LỖI: MÃ TẦNG 1 ĐÃ HẾT HẠN";
-                    keyInput.classList.add('error-text');
-                    showToast("LINK ĐÃ QUÁ HẠN 10 PHÚT, VUI LÒNG BẤM LẤY KEY MỚI", true);
+                    keyInput.value = `LỖI: LIÊN KẾT LỚP ${cur} ĐÃ HẾT HẠN`;
+                    keyInput.className = 'error-text';
+                    terminalStatus.innerText = "TOKEN EXPIRED";
+                    showToast("Liên kết đã quá hạn! Vui lòng bấm tạo lại key mới.", "error");
                 }
             } catch (error) {
-                keyInput.value = "LỖI KẾT NỐI SERVER";
-                keyInput.classList.add('error-text');
+                keyInput.value = "LỖI KẾT NỐI MÁY CHỦ";
+                keyInput.className = 'error-text';
+                terminalStatus.innerText = "NETWORK ERROR";
             }
             return;
         }
 
-        // TẦNG 2: VƯỢT LINK 2 XONG -> HIỂN THỊ MÃ KEY HOÀN CHỈNH
+        // TRƯỜNG HỢP: ĐÃ VƯỢT XONG ĐÍCH ĐẾN CUỐI CÙNG -> HIỂN THỊ MÃ KEY
         if (anonymousID) {
+            setStep(3);
+            terminalStatus.innerText = "AUTHENTICATING KEY...";
             try {
                 const response = await fetch(`${BASE_FIREBASE}${anonymousID}.json`);
                 const data = await response.json();
-                
+
                 if (data) {
+                    if (data.status && String(data.status).toLowerCase() !== "active") {
+                        keyInput.value = "LỖI: KEY ĐÃ BỊ KHÓA HOẶC TẠM DỪNG";
+                        keyInput.className = 'error-text';
+                        terminalStatus.innerText = "KEY REVOKED";
+                        showToast("Mã Key này đã bị vô hiệu hóa!", "error");
+                        return;
+                    }
+
                     const parsedKey = data.mapsTo || data.key || (typeof data === "string" ? data : null);
                     if (parsedKey) {
+                        const isVip = parsedKey.startsWith("VIPMATRIX");
                         keyInput.value = parsedKey;
-                        mainTitle.innerText = "XÁC THỰC HOÀN TẤT";
-                        subTitle.innerText = "Mã Key của bạn đã sẵn sàng!";
-                        showToast("XÁC THỰC THÀNH CÔNG! BẤM SAO CHÉP MÃ KEY.");
+
+                        if (isVip) {
+                            keyInput.className = 'vip-text';
+                            mainTitle.innerText = "XÁC THỰC THÀNH CÔNG ★ KEY VIP 6H";
+                            mainTitle.style.background = "linear-gradient(135deg, #fef08a, #f59e0b)";
+                            mainTitle.style.webkitBackgroundClip = "text";
+                            mainTitle.style.webkitTextFillColor = "transparent";
+                            subTitle.innerText = "Mã Key VIP 4 Lớp đã sẵn sàng sử dụng!";
+                            terminalStatus.innerText = "VIP KEY GRANTED • 6 HOURS";
+                            showToast("Chúc mừng! Bạn đã nhận Key VIP 6 Giờ thành công.", "vip");
+                        } else {
+                            keyInput.className = '';
+                            mainTitle.innerText = "XÁC THỰC HOÀN TẤT";
+                            subTitle.innerText = "Mã Key bản chuẩn của bạn đã sẵn sàng!";
+                            terminalStatus.innerText = "NORMAL KEY GRANTED • 6 HOURS";
+                            showToast("Xác thực hoàn tất! Bấm 'Sao chép Key' để dán vào game.", "success");
+                        }
                         return;
                     }
                 }
-                
-                keyInput.value = "LỖI: KEY KHÔNG TỒN TẠI HOẶC ĐÃ XÓA";
-                keyInput.classList.add('error-text');
-                showToast("KEY ĐÃ HẾT HẠN, BẤM 'LẤY KEY MỚI'", true);
-            } catch (error) { 
-                keyInput.value = "LỖI TRUY VẤN DATABASE"; 
-                keyInput.classList.add('error-text');
+
+                keyInput.value = "LỖI: KEY HẾT HẠN HOẶC KHÔNG TỒN TẠI";
+                keyInput.className = 'error-text';
+                terminalStatus.innerText = "KEY NOT FOUND";
+                showToast("Key không tồn tại hoặc đã hết hạn, vui lòng bấm lấy key mới!", "error");
+            } catch (error) {
+                keyInput.value = "LỖI TRUY VẤN DATABASE";
+                keyInput.className = 'error-text';
+                terminalStatus.innerText = "DATABASE ERROR";
             }
-            return;
         }
     }
 
     async function copyToClipboard() {
+        playBeep('click');
         const keyInput = document.getElementById('keyInput');
-        if (keyInput.value && !keyInput.value.startsWith("LỖI") && !keyInput.value.startsWith("BẤM") && !keyInput.value.startsWith("ĐANG")) {
+        const copyBtnText = document.getElementById('copyBtnText');
+        const val = keyInput.value.trim();
+
+        if (val && !val.startsWith("LỖI") && !val.startsWith("BẤM") && !val.startsWith("ĐANG")) {
+            let copied = false;
             try {
-                await navigator.clipboard.writeText(keyInput.value);
-                showToast("ĐÃ SAO CHÉP KEY! HÃY VÀO GAME ĐỂ KÍCH HOẠT.");
+                await navigator.clipboard.writeText(val);
+                copied = true;
             } catch (err) {
                 keyInput.select();
-                document.execCommand('copy');
-                showToast("ĐÃ SAO CHÉP MÃ KEY VÀO KHAY NHỚ.");
+                copied = document.execCommand('copy');
+            }
+
+            if (copied) {
+                copyBtnText.innerText = "ĐÃ SAO CHÉP!";
+                showToast("Đã chép mã Key vào bộ nhớ tạm! Dán vào game để kích hoạt.", "success");
+                setTimeout(() => {
+                    copyBtnText.innerText = "SAO CHÉP KEY";
+                }, 2200);
+            } else {
+                showToast("Không thể tự động chép, hãy bôi đen và copy thủ công!", "error");
             }
         } else {
-            showToast("BẤM 'LẤY KEY MỚI' ĐỂ VƯỢT LINK LẤY KEY!", true);
+            showToast("Vui lòng bấm 'Lấy Key' để nhận liên kết vượt link trước!", "error");
         }
     }
 
-    window.onload = resolveKey;
+    window.addEventListener('DOMContentLoaded', () => {
+        resolveKey();
+    });
 </script>
 </body>
 </html>
